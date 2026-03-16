@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TeenWork - Digital Marketplace</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .glass {
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .terms-box::-webkit-scrollbar { width: 4px; }
+        .terms-box::-webkit-scrollbar-thumb { background: #475569; border-radius: 10px; }
+        .seller-card { animation: fadeIn 0.5s ease-out forwards; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .admin-glow { box-shadow: 0 0 20px rgba(59, 130, 246, 0.3); }
+        .input-dark { background: #020617; border: 1px solid #1e293b; color: white; }
+        .input-dark:focus { border-color: #3b82f6; outline: none; }
+    </style>
+</head>
+<body class="bg-slate-950 text-white font-sans min-h-screen flex flex-col">
+
+    <!-- NAVIGATION -->
+    <nav class="p-6 flex justify-between items-center glass sticky top-0 z-40">
+        <div class="flex items-center space-x-2 cursor-pointer" onclick="showSection('browse')">
+            <div class="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center font-black">T</div>
+            <h1 class="text-xl font-black text-white tracking-tighter">TEEN<span class="text-blue-500">WORK</span></h1>
+        </div>
+        <div class="flex items-center space-x-6">
+            <button onclick="showSection('browse')" class="text-sm font-medium hover:text-blue-400 transition">Hire Talent</button>
+            <button onclick="showSection('join')" class="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-full text-sm font-bold transition shadow-lg shadow-blue-500/20">
+                Become a Seller
+            </button>
+        </div>
+    </nav>
+
+    <!-- TERMS OVERLAY -->
+    <div id="terms-overlay" class="fixed inset-0 bg-black/90 z-[100] flex items-center justify-center p-4">
+        <div class="bg-slate-900 w-full max-w-lg rounded-3xl border border-slate-800 p-8 shadow-2xl">
+            <h2 class="text-2xl font-black mb-4">Terms & Privacy Policy</h2>
+            <div class="terms-box h-64 overflow-y-auto text-sm text-slate-400 space-y-4 pr-2 mb-6">
+                <p><strong class="text-white">1. Data Collection:</strong> To ensure marketplace security, we capture your network IP address upon entrance. This data is used solely for manual administrator identification.</p>
+                <p><strong class="text-white">2. Auto-Deletion Policy:</strong> We respect your privacy. All captured IP addresses and connection metadata are <span class="text-blue-400 font-bold underline">permanently deleted from our database within 2 days (48 hours)</span> of your visit.</p>
+                <p><strong class="text-white">3. Platform Use:</strong> Users must be between 13-19 years old. Any fraudulent activity will result in an IP-based restriction managed by the owner.</p>
+                <p><strong class="text-white">4. Privacy:</strong> We do not sell your data. Your contact info is only visible to buyers after manual admin verification.</p>
+            </div>
+            <button onclick="acceptTerms()" class="w-full bg-blue-600 py-4 rounded-xl font-bold hover:bg-blue-500 transition-all">I Agree & Proceed</button>
+        </div>
+    </div>
+
+    <main class="container mx-auto p-6 max-w-6xl flex-grow">
+        
+        <!-- BUYING PAGE -->
+        <section id="browse-section">
+            <div class="mb-10">
+                <h2 class="text-4xl font-black mb-2">Find Digital Experts</h2>
+                <p class="text-slate-400">Teen freelancers ready to work on your projects.</p>
+            </div>
+            <div id="listings-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div id="no-sellers" class="col-span-full py-20 text-center border-2 border-dashed border-slate-800 rounded-3xl">
+                    <div class="text-slate-500 mb-4 text-5xl">🔭</div>
+                    <h3 class="text-xl font-bold text-slate-300">No sellers active in your area yet</h3>
+                    <p class="text-slate-500 text-sm mt-2">Be the first to join and start earning!</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- SELLER REGISTRATION -->
+        <section id="join-section" class="hidden animate-in fade-in duration-500">
+            <div class="max-w-xl mx-auto">
+                <div class="bg-slate-900 p-8 rounded-3xl border border-slate-800 shadow-2xl">
+                    <h2 class="text-2xl font-bold mb-8">Seller Registration</h2>
+                    <form id="seller-form" class="space-y-5">
+                        <div class="grid grid-cols-2 gap-4">
+                            <input type="text" id="reg-name" required placeholder="Full Name" class="w-full input-dark p-3 rounded-xl text-sm">
+                            <input type="tel" id="reg-phone" required placeholder="Phone Number" class="w-full input-dark p-3 rounded-xl text-sm">
+                        </div>
+                        <input type="text" id="reg-skill" required placeholder="Skill (e.g. Graphic Designer)" class="w-full input-dark p-3 rounded-xl text-sm">
+                        <textarea id="reg-bio" rows="2" placeholder="Briefly describe your work..." class="w-full input-dark p-3 rounded-xl text-sm"></textarea>
+                        
+                        <div class="bg-slate-950 p-4 rounded-2xl border border-slate-800 text-[10px] text-slate-500">
+                            <p class="mb-2 font-bold text-blue-500 italic">🛡️ SECURITY PROTOCOL: CAPTURING IP</p>
+                            <p>Network ID logged to Master DB. <span class="underline">Auto-deleted in 48 hours.</span> Verification is manual by Sabareesh.</p>
+                        </div>
+
+                        <button type="submit" id="reg-btn" class="w-full bg-blue-600 py-4 rounded-xl font-bold hover:bg-blue-500 transition-all">Submit Profile & Log IP</button>
+                    </form>
+                </div>
+            </div>
+        </section>
+
+        <!-- OWNER PORTAL -->
+        <section id="owner-section" class="hidden animate-in fade-in duration-500">
+            <div class="max-w-2xl mx-auto">
+                <div class="bg-slate-900 p-8 rounded-3xl border-2 border-blue-900 admin-glow">
+                    <div id="admin-login-view">
+                        <div class="text-center mb-6">
+                            <div class="inline-block p-4 bg-blue-600 rounded-2xl mb-4">
+                                <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
+                            </div>
+                            <h2 class="text-2xl font-black">Owner Authorization</h2>
+                        </div>
+
+                        <form id="admin-login-form" class="space-y-4">
+                            <input type="text" id="admin-user" required placeholder="Owner Username" class="w-full input-dark p-3 rounded-xl text-sm">
+                            <input type="password" id="admin-pass" required placeholder="Master Password" class="w-full input-dark p-3 rounded-xl text-sm">
+                            <button type="submit" class="w-full bg-blue-600 py-3 rounded-xl font-bold hover:bg-blue-700 transition">Authorize Access</button>
+                        </form>
+                    </div>
+
+                    <!-- LOGGED IN ADMIN VIEW -->
+                    <div id="admin-dashboard" class="hidden space-y-8">
+                        <div class="flex justify-between items-center border-b border-slate-800 pb-4">
+                            <h3 class="text-lg font-bold text-green-400">Sabareesh: Active Session</h3>
+                            <button onclick="logoutAdmin()" class="text-[10px] text-slate-500 hover:text-red-500 uppercase font-bold">Log Out</button>
+                        </div>
+
+                        <div class="space-y-4">
+                            <label class="block text-xs font-bold text-slate-400 uppercase tracking-widest">Master Spreadsheet Management</label>
+                            <div class="flex space-x-2">
+                                <input type="text" id="new-sheet-url" placeholder="Macro URL..." class="flex-grow input-dark p-3 rounded-xl text-xs">
+                                <button onclick="updateMasterSheet()" class="bg-blue-600 px-4 py-2 rounded-xl text-xs font-bold hover:bg-blue-500">Update</button>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-4 pt-4">
+                            <button onclick="openCurrentSheet()" class="bg-slate-800 p-4 rounded-2xl text-xs font-bold hover:bg-slate-700 border border-slate-700 transition">📊 Open DB</button>
+                            <button onclick="alert('Manual Verification Mode: Active. IP logs are being sent to your Google Sheet.')" class="bg-slate-800 p-4 rounded-2xl text-xs font-bold hover:bg-slate-700 border border-slate-700 transition text-blue-400">🕒 Manual Audit</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="p-8 border-t border-slate-900 text-center">
+        <button onclick="showSection('owner')" class="text-[10px] text-slate-800 hover:text-blue-900 transition font-bold uppercase tracking-widest">
+            Administrator Access Portal
+        </button>
+    </footer>
+
+    <script>
+        const DEFAULT_URL = "https://script.google.com/macros/s/AKfycbxh3sD81NdwNz-dfIwe5SkUvF5kyhlC7zzxLorytjZS8qHUYVkNBxpXNM0xWGfSSu6pfw/exec";
+        let SCRIPT_URL = localStorage.getItem('owner_sheet_url') || DEFAULT_URL;
+        let activeSellers = [];
+
+        window.onload = function() {
+            if(localStorage.getItem('terms_accepted')) {
+                document.getElementById('terms-overlay').classList.add('hidden');
+                captureEntranceIP();
+            }
+        };
+
+        function acceptTerms() {
+            localStorage.setItem('terms_accepted', 'true');
+            document.getElementById('terms-overlay').classList.add('hidden');
+            captureEntranceIP();
+        }
+
+        // CAPTURE RAW IP (Standard method used by browsers for network requests)
+        async function captureEntranceIP() {
+            try {
+                // Fetch the IP from ipify (purely as a data source, no verification logic)
+                const ipRes = await fetch('https://api.ipify.org?format=json');
+                const ipData = await ipRes.json();
+                
+                const params = new URLSearchParams({
+                    action: 'entranceLog',
+                    ip: ipData.ip,
+                    timestamp: new Date().toISOString()
+                });
+                
+                // Send raw IP to your Google Sheet
+                fetch(SCRIPT_URL, { method: 'POST', body: params, mode: 'no-cors' });
+            } catch (e) { console.log("Manual trace log failed."); }
+        }
+
+        function showSection(section) {
+            ['browse-section', 'join-section', 'owner-section'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.classList.add('hidden');
+            });
+            const target = document.getElementById(section + '-section');
+            if (target) target.classList.remove('hidden');
+            if(section === 'browse') renderSellers();
+        }
+
+        document.getElementById('seller-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('reg-btn');
+            btn.disabled = true;
+            btn.innerText = "Logging IP...";
+
+            try {
+                const ipRes = await fetch('https://api.ipify.org?format=json');
+                const ipData = await ipRes.json();
+                
+                const params = new URLSearchParams({
+                    ip: ipData.ip,
+                    name: document.getElementById('reg-name').value,
+                    phone: document.getElementById('reg-phone').value,
+                    skill: document.getElementById('reg-skill').value,
+                    action: 'registration'
+                });
+
+                await fetch(SCRIPT_URL, { method: 'POST', body: params, mode: 'no-cors' });
+                
+                activeSellers.push({
+                    name: document.getElementById('reg-name').value,
+                    skill: document.getElementById('reg-skill').value,
+                    phone: document.getElementById('reg-phone').value,
+                    bio: document.getElementById('reg-bio').value || "Freelance Specialist"
+                });
+
+                alert("Submitted! IP logged for your manual verification. Auto-deleting in 48h.");
+                showSection('browse');
+                e.target.reset();
+            } catch (err) { alert("Network issue. Please try again."); }
+            finally { btn.disabled = false; btn.innerText = "Submit Profile & Log IP"; }
+        });
+
+        document.getElementById('admin-login-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const user = document.getElementById('admin-user').value;
+            const pass = document.getElementById('admin-pass').value;
+
+            if (user === "sabareesh" && pass === "Winner@2298") {
+                showAdminDashboard();
+            } else {
+                alert("Unauthorized.");
+            }
+        });
+
+        function showAdminDashboard() {
+            document.getElementById('admin-login-view').classList.add('hidden');
+            document.getElementById('admin-dashboard').classList.remove('hidden');
+            document.getElementById('new-sheet-url').value = SCRIPT_URL;
+        }
+
+        function updateMasterSheet() {
+            const newUrl = document.getElementById('new-sheet-url').value;
+            if (newUrl.trim().startsWith("http")) {
+                SCRIPT_URL = newUrl;
+                localStorage.setItem('owner_sheet_url', newUrl);
+                alert("Success.");
+            }
+        }
+
+        function openCurrentSheet() {
+            window.open(SCRIPT_URL, '_blank');
+        }
+
+        function logoutAdmin() {
+            document.getElementById('admin-login-view').classList.remove('hidden');
+            document.getElementById('admin-dashboard').classList.add('hidden');
+            document.getElementById('admin-login-form').reset();
+        }
+
+        function renderSellers() {
+            const container = document.getElementById('listings-container');
+            const empty = document.getElementById('no-sellers');
+            container.querySelectorAll('.seller-card').forEach(c => c.remove());
+
+            if (activeSellers.length > 0) {
+                empty.classList.add('hidden');
+                activeSellers.forEach(s => {
+                    const div = document.createElement('div');
+                    div.className = "seller-card bg-slate-900 p-6 rounded-2xl border border-slate-800 hover:border-blue-500/50 transition";
+                    div.innerHTML = `
+                        <div class="flex justify-between items-start mb-4">
+                            <div>
+                                <h3 class="font-bold text-lg">${s.name}</h3>
+                                <span class="text-[10px] text-blue-500 font-black uppercase tracking-widest">${s.skill}</span>
+                            </div>
+                            <div class="w-2 h-2 bg-green-500 rounded-full shadow-lg shadow-green-500/50"></div>
+                        </div>
+                        <p class="text-xs text-slate-500 mb-6 leading-relaxed">${s.bio}</p>
+                        <button onclick="alert('Contact: ${s.phone}')" class="w-full bg-slate-800 py-2 rounded-lg text-[10px] font-bold hover:bg-slate-700 transition">VIEW CONTACT</button>
+                    `;
+                    container.appendChild(div);
+                });
+            } else { empty.classList.remove('hidden'); }
+        }
+
+        document.addEventListener('contextmenu', e => e.preventDefault());
+    </script>
+</body>
+</html>
